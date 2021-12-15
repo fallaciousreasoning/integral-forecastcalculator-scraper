@@ -35,7 +35,8 @@ class ApiClient:
         if len(self.http.cookies) != 0:
             return
 
-        response = self.make_request('/Account/Login', 'POST', body={
+        get_response = self.make_request('/Account/Login', 'GET')
+        login_response = self.make_request('/Account/Login', 'POST', body={
             'Email': self.username,
             'Password': self.password,
             'RememberMe': True
