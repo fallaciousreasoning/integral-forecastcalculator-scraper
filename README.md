@@ -4,8 +4,11 @@ A scraper for [this site](https://forecastercalculator.integral.co.nz/) to simpl
 ## Setup
 1. Install python3 (I'm using v3.9)
 2. Install the requirements (in the project folder)
+
     pip install -r requirements.txt
+    
 3. Run the main.py file
+
     python main.py
 
 Hopefully, a bunch of files from a test run should be dumped out.
