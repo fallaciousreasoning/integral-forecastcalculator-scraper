@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Any, Dict
 import requests
 import os
 
@@ -31,15 +31,18 @@ class ApiClient:
         url = f'{BASE_URL}{path}'
         return self.http.request(method=method, url=url, data=body)
 
+    def forge_post(self, path: str, body: dict[str, Any]) -> Response:
+        get_request = self.make_request(path, 'GET')
+        html = BeautifulSoup(get_request.text)
+        token = html.find('input', { 'name': '__RequestVerificationToken'})
+        body['__RequestVerificationToken'] = token.attrs['value']
+        return self.make_request(path, method='POST', body=body)
+
     def ensure_loggedin(self):
         if len(self.http.cookies) != 0:
             return
 
-        get_response = self.make_request('/Account/Login', 'GET')
-        html = BeautifulSoup(get_response.text)
-        token = html.find('input', { 'name': '__RequestVerificationToken' })
-        login_response = self.make_request('/Account/Login', 'POST', body={
-            '__RequestVerificationToken': token.attrs['value'],
+        login_response = self.forge_post('/Account/Login', 'POST', body={
             'Email': self.username,
             'Password': self.password,
             'RememberMe': True
