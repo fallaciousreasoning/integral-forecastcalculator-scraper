@@ -33,7 +33,8 @@ class ApiClient:
         self.http = requests.session()
         self.username = username
         self.password = password
-        # self.http.cookies.update(get_cookies())
+        
+        self.ensure_loggedin()
 
     def make_request(self, path: str, method: str, body=None, headers=None) -> Response:
         url = f'{BASE_URL}{path}'
