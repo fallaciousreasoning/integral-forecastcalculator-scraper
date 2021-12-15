@@ -50,4 +50,27 @@ class ApiClient:
 
         save_cookies(self.http.cookies.get_dict())
 
+    def simulate(lat: float, lng: float, altitude: float=300, site_index: float=30, index_300: float=26, index_500: float=18.4):
+        body = {
+            'site': {
+                'latitude': lat,
+                'longitude': lng,
+                'altitude': altitude,
+                'siteIndex': site_index,
+                'the300Index': index_300,
+                'the500Index': index_500
+            },
+            'regime': {
+                'commands': [
+
+                ]
+            },
+            'results': {
+                'outputFiles': [],
+                'status': {
+                    'failure': False
+                }
+            }
+        }
+
         
