@@ -87,3 +87,16 @@ class ApiClient:
         parsed = json.loads(response.text)
         output_files = [DownloadLink(file['folderName'], file['fileName']) for file in parsed['outputFiles']]
         return output_files
+
+    def download_file(self, run_name: str, link: DownloadLink):
+        output_folder = f'output/{run_name}'
+        if not os.path.exists(output_folder): os.makedirs(output_folder)
+
+        output_file = f'{output_folder}/{link.file_name}'
+
+        url = f'{BASE_URL}{link.download_path()}'
+        r = self.http.get(url)
+        with open(output_file, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=1024): 
+                if chunk: # filter out keep-alive new chunks
+                    f.write(chunk)
