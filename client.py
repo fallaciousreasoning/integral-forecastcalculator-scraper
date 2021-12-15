@@ -8,6 +8,8 @@ import json
 import urllib
 import urllib3
 
+from download_link import DownloadLink
+
 BASE_URL = "https://forecastercalculator.integral.co.nz"
 
 
@@ -57,10 +59,21 @@ class ApiClient:
         save_cookies(self.http.cookies.get_dict())
 
     def simulate(self, lat: float, lng: float, commands: list, altitude: float = 300, site_index: float = 30, index_300: float = 26, index_500: float = 18.4):
-        json_data = {"site": {"latitude": 38.221, "longitude": 176.07, "altitude": 660, "siteIndex": 30, "the300Index": 26, "the500Index": 18.4}, "regime": {"commands": [{"condition": "Date+=+[Jun+2000]", "event": {"$type": "Scion.ForecasterCalculator.Models.PlantEventViewModel,+Scion.ForecasterCalculator", "species": "PSMEN", "plantStocking": 1650}}, {"condition": "Date+=+[Jun+2010]", "event": {"$type": "Scion.ForecasterCalculator.Models.MeasurementEventViewModel,+Scion.ForecasterCalculator", "stocking": 1500, "basalArea": 6.8, "meanTopHeight": 5.9}}, {"condition": "Crop.Age+=+15", "event": {"$type": "Scion.ForecasterCalculator.Models.ThinEventViewModel,+Scion.ForecasterCalculator", "residualStocking": 750}}, {
-            "condition": "Crop.Age+=+40", "event": {"$type": "Scion.ForecasterCalculator.Models.ClearfellEventViewModel,+Scion.ForecasterCalculator", "pricedLogProductDefinitions": [{"name": "DS", "description": "Sawlog", "pricePerM3": 160, "maxCut": 99, "priority": 1}, {"name": "CF+", "description": "", "pricePerM3": 110, "maxCut": 99, "priority": 2}, {"name": "CF-", "description": "", "pricePerM3": 90, "maxCut": 99, "priority": 3}, {"name": "Pulp", "description": "Pulp+log", "pricePerM3": 40, "maxCut": 99, "priority": 4}], "cuttingStrategyName": "Douglas-fir", "cuttingStrategyDescription": "", "specie": "PSMEN", "cutCost": 1, "buckingMode": "MaximumValue"}}]}, "results": {"outputFiles": [], "status": {"failure": False}}}
+        json_data = {
+            "site": {
+                "latitude": lat,
+                "longitude": lng,
+                "altitude": altitude,
+                "siteIndex": site_index,
+                "the300Index": index_300,
+                "the500Index": index_500
+            },
+            "regime": {
+                "commands": commands
+            },
+            "results": {"outputFiles": [], "status": {"failure": False}}}
 
-        json_str = json.dumps(json_data, separators=(',',':'))
+        json_str = json.dumps(json_data, separators=(',', ':'))
         body = urllib.parse.urlencode({
             'simulateViewModelJSON': json_str
         }, safe=':+')
@@ -70,4 +83,7 @@ class ApiClient:
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
                 'accept': 'application/json, text/javascript, */*; q=0.01'
             })
-        return response
+
+        parsed = json.loads(response.text)
+        output_files = [DownloadLink(file['folderName'], file['fileName']) for file in parsed['outputFiles']]
+        return output_files
