@@ -1,4 +1,5 @@
 # Scraper for forecastercalculator.integral.co.nz
+A scraper for [this site](https://forecastercalculator.integral.co.nz/) to simplify extracting reports.
 
 ## Setup
 1. Install python3 (I'm using v3.9)
