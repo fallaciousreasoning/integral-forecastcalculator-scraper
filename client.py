@@ -2,8 +2,8 @@ from typing import Dict
 import requests
 import os
 
+from bs4 import BeautifulSoup
 from requests.models import Response
-from requests.sessions import session
 
 BASE_URL = "https://forecastercalculator.integral.co.nz"
 
@@ -17,7 +17,7 @@ def get_cookies():
 
 def save_cookies(cookies: Dict[str,str]):
     with open('.cookies', 'w') as f:
-        for key, value in enumerate(cookies):
+        for key, value in cookies.items():
             f.write(f'{key}={value}\n')
 
 class ApiClient:
@@ -36,7 +36,10 @@ class ApiClient:
             return
 
         get_response = self.make_request('/Account/Login', 'GET')
+        html = BeautifulSoup(get_response.text)
+        token = html.find('input', { 'name': '__RequestVerificationToken' })
         login_response = self.make_request('/Account/Login', 'POST', body={
+            '__RequestVerificationToken': token.attrs['value'],
             'Email': self.username,
             'Password': self.password,
             'RememberMe': True
