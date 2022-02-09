@@ -47,6 +47,11 @@ class ApiClient:
         body['__RequestVerificationToken'] = token.attrs['value']
         return self.make_request(path, method='POST', body=body)
 
+    def get_indices(self, lat, lng, index500=18.4):
+        path = f'/Simulate/LookupSiteData?latitude={lat}&longitude={lng}&the500Index={index500}'
+        result = self.make_request(path, 'GET')
+        return result.json()
+
     def ensure_loggedin(self):
         if len(self.http.cookies) != 0:
             return
