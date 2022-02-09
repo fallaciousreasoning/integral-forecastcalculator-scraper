@@ -28,7 +28,7 @@ def maybe_write_header():
     if os.path.exists(file_name):
         return
     with open(file_name, 'w') as f:
-        f.write(f'lat, lng, altitude, siteIndex, 300index, 500index\n')
+        f.write(f'lat, lng, altitude, siteIndex, the300index, the500index\n')
 
 def write_line(lat, lng, altitude, siteIndex, index300, index500):
     with open(file_name, 'a') as f:
@@ -47,6 +47,7 @@ def parse_input_points(input_file):
 if __name__ == "__main__":
     # Load the points which we've already downloaded. This is useful if we crash halfway through.
     load_points()
+    # Write the header line, if the file doesn't already exist.
     maybe_write_header()
 
     # Your login details here...
@@ -57,7 +58,6 @@ if __name__ == "__main__":
 
     done = 0
     for point in input_points:
-        print(f'Progress: {done+1}/{len(input_points)}') # Let the user know how we're doing.
         done += 1
 
         # If we've already got the info about this point, skip it.
@@ -66,5 +66,7 @@ if __name__ == "__main__":
 
         indices = client.get_indices(point[0], point[1])
         write_line(indices['latitude'], indices['longitude'], indices['altitude'], indices['siteIndex'], indices['the300Index'], indices['the500Index'])
+        
+        print(f'Progress: {done+1}/{len(input_points)}') # Let the user know how we're doing.
 
     print(f"Done! Indices are in the file {file_name}")
