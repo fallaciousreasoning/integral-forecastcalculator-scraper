@@ -37,3 +37,10 @@ for file in files:
     # f'{custom_lat}_{custom_lng}' for a run name so the downloads for different runs go in different folders.
     client.download_file('excel_files', file)
 ```
+
+## Scraping Indices
+
+An indice scraper has been setup to pull down the simulation indices. Simply create the file `input/input_points.csv` and run
+`python download_indices.py` The downloaded indices will be in the file `output/site_indices.csv`.
+
+**IMPORTANT** The input points must be specified as LATITUDE, LONGITUDE **NOT** LONGITUDE, LATITUDE
